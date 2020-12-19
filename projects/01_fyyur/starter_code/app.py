@@ -274,8 +274,7 @@ def create_venue_submission():
     finally:
       db.session.close()
     if error:
-      flash('An error occurred. Venue could not be insert.')  
-   
+      flash('An error occurred. Venue could not be insert.')     
     else:
       flash('Venue ' + request.form['name'] + ' was successfully listed!')
 
