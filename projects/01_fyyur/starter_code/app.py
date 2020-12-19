@@ -101,9 +101,9 @@ def index():
 def venues():
   # TODO: replace with real venues data.
   #       num_shows should be aggregated based on number of upcoming shows per venue.
-  data=Venue.query.first()
-  #venues=Venue.query.all()
-  return render_template('pages/venues.html', areas=data)
+  area=Venue.query.distinct('city')
+  venue=Venue.query.distinct('name')
+  return render_template('pages/venues.html', areas=area, venues=venue)
 
 @app.route('/venues/search', methods=['POST'])
 def search_venues():
