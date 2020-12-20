@@ -10,6 +10,10 @@
 				<h5>{{ artist.name }}</h5>
 			</div>
 		</a>
+		<div class="form-group">
+			<a href="/artists/{{ artist.id_artist }}/edit" class="btn btn-primary" role="button">Update</a>
+		</div>		
+
 	</li>
 	{% endfor %}
 </ul>
