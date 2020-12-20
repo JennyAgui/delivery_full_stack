@@ -176,7 +176,7 @@ def create_venue_submission():
   # e.g., flash('An error occurred. Venue ' + data.name + ' could not be listed.')
   # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
 
-
+#  ------- DELETE venue -------------------------------
 @app.route('/venues/<int:venue_id>', methods=['POST'])
 def delete_venue(venue_id):
   # TODO: Complete this endpoint for taking a venue_id, and using
@@ -230,8 +230,6 @@ def show_artist(artist_id):
   return render_template('pages/show_artist.html', artist=data)
 
 
-
-
 #  Update
 #  ----------------------------------------------------------------
 @app.route('/artists/<int:artist_id>/edit', methods=['GET'])
@@ -247,7 +245,7 @@ def edit_artist_submission(artist_id):
   # artist record with ID <artist_id> using the new attributes
     error= False
     try:               
-      artist = Artist.query.get(artist_id)
+      artist = Artist.query.get(artist_id)     
       artist.name = request.form.get('name')
       artist.city = request.form.get('city')   
       artist.state = 'CA'   
@@ -263,6 +261,10 @@ def edit_artist_submission(artist_id):
       db.session.rollback()
     finally:
       db.session.close()
+    if error:
+      flash('An error occurred. Artist could not be updated.') 
+    else:
+       flash('Artist ' + request.form['name'] + ' was successfully updated!')
     return redirect(url_for('show_artist', artist_id=artist_id))
 
 @app.route('/venues/<int:venue_id>/edit', methods=['GET'])
