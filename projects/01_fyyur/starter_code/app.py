@@ -186,15 +186,11 @@ def delete_venue(venue_id):
       venue = Venue.query.get(venue_id)
       db.session.delete(venue)
       db.session.commit()
-    except Exception as e:
+    except:
       error=True
       db.session.rollback()
-      print(e)
-      pass
     finally:
       db.session.close()
-#      return None
- #     return jsonify ({'Success:True'})
   # BONUS CHALLENGE: Implement a button to delete a Venue on a Venue Page, have it so that
   # clicking that button delete it from the db then redirect the user to the homepage
     if error:
