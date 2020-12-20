@@ -53,7 +53,7 @@ class Venue(db.Model):
     image_link = db.Column(db.String(500), nullable=True)
     seeking_talent = db.Column(db.Boolean, nullable=True, default=False)
     seeking_description = db.Column(db.String(120), nullable=True)
-    artists = db.relationship("Show", back_populates="venues")
+    artists = db.relationship("Show", back_populates="venue_child")
      # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
 class Artist(db.Model):
@@ -68,7 +68,7 @@ class Artist(db.Model):
     seeking_venue = db.Column(db.Boolean, nullable=True, default=False)
     seeking_description = db.Column(db.String(120), nullable=True)
     image_link = db.Column(db.String(500), nullable=True)   
-    venues = db.relationship("Show", back_populates="artists")
+    venues = db.relationship("Show", back_populates="artist_parent")
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
 # TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
@@ -377,27 +377,22 @@ def create_show_submission():
   # called to create new shows in the db, upon submitting new show listing form
   # TODO: insert form data as a new Show record in the db, instead
     error= False
- #   try:
-   
-    artist_id = request.form.get('artist_id')
-    venue_id = request.form.get('venue_id')
-    date = request.form.get('start_time')
-    artist=Artist.query.filter_by(id_artist=artist_id).first()     
-    venue=Venue.query.filter_by(id_venue=venue_id).first()
-
-    artist.shows = [venue, date]
-    venue.artists = [artist]
-    db.session.add(artist)
-    db.session.commit()
-#    except:
-#      error=True
-#    db.session.rollback()
- #   finally:
-    db.session.close()
-    # if error:
-    #   flash('An error occurred. Show could not be listed.')
-    # else:
-    #    flash('Show was successfully listed!')
+    try:
+      artist_id = request.form.get('artist_id')
+      venue_id = request.form.get('venue_id')
+      date = request.form.get('start_time')    
+      show= Show(artist_id=artist_id, venue_id=venue_id, date=date)
+      db.session.add(show)
+      db.session.commit()
+    except:
+      error=True
+      db.session.rollback()
+    finally:
+      db.session.close()
+    if error:
+      flash('An error occurred. Show could not be listed.')
+    else:
+      flash('Show was successfully listed!')   
     return render_template('pages/home.html')
   # on successful db insert, flash success
   # flash('Show was successfully listed!')
