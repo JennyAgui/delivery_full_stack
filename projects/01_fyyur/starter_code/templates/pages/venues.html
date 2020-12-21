@@ -12,17 +12,17 @@
 				<div class="item">
 					<h5>{{ venue.name }}</h5>
 				</div>				
-			</a>
-			<div class="form-group">
-				<form>
-					<input type="submit"
-						   value="Delete"
-						   class="btn btn-primary"
-						   formmethod="POST"
-						   formaction="{{ url_for('delete_venue', venue_id=venue.id_venue) }}">
-				</form>
+			</a>			
+		</li>
+		<li>
+			<form>
+				<input type="submit"
+					   value="Delete"
+					   class="btn btn-primary"
+					   formmethod="POST"
+					   formaction="{{ url_for('delete_venue', venue_id=venue.id_venue) }}">
 				<a href="/venues/{{ venue.id_venue }}/edit" class="btn btn-primary" role="button">Update</a>
-			</div>
+			</form>
 		</li>
 		{% endif %}
 		{% endfor %}
