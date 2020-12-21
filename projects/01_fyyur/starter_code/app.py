@@ -54,7 +54,7 @@ class Venue(db.Model):
     seeking_talent = db.Column(db.Boolean, nullable=True, default=False)
     seeking_description = db.Column(db.String(120), nullable=True)
     artists = db.relationship("Show", back_populates="venue_child")
-     # TODO: implement any missing fields, as a database migration using Flask-Migrate
+  # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
 class Artist(db.Model):
     __tablename__ = 'artist'
@@ -69,9 +69,9 @@ class Artist(db.Model):
     seeking_description = db.Column(db.String(120), nullable=True)
     image_link = db.Column(db.String(500), nullable=True)   
     venues = db.relationship("Show", back_populates="artist_parent")
-    # TODO: implement any missing fields, as a database migration using Flask-Migrate
+  # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
-# TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
+  # TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
 
 
 #----------------------------------------------------------------------------#
@@ -94,7 +94,7 @@ app.jinja_env.filters['datetime'] = format_datetime
 
 @app.route('/')
 def index():
-  return render_template('pages/home.html')
+    return render_template('pages/home.html')
 
 #  ----------------------------------------------------------------
 #  Venues
@@ -104,47 +104,83 @@ def index():
 def venues():
   # TODO: replace with real venues data.
   #       num_shows should be aggregated based on number of upcoming shows per venue.
-  area=Venue.query.distinct('city')
-  venue=Venue.query.distinct('name')
-  return render_template('pages/venues.html', areas=area, venues=venue)
+    area=Venue.query.distinct('city')
+    venue=Venue.query.distinct('name')
+    return render_template('pages/venues.html', areas=area, venues=venue)
 
 @app.route('/venues/search', methods=['POST'])
 def search_venues():
   # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.
   # seach for Hop should return "The Musical Hop".
   # search for "Music" should return "The Musical Hop" and "Park Square Live Music & Coffee"
-  search_term = request.form.get('search_term', '')
-  venues = db.session.query(Venue).filter(Venue.name.ilike('%' + search_term + '%')).all()
-  data = []
+    search_term = request.form.get('search_term', '')
+    venues = db.session.query(Venue).filter(Venue.name.ilike('%' + search_term + '%')).all()
+    data = []
+    for venue in venues:
+        search = db.session.query(Venue).filter(Venue.id_venue == venue.id_venue)
+        data.append({
+          "id": venue.id_venue,
+          "name": venue.name,
+        })
 
-  for venue in venues:
-      search = db.session.query(Venue).filter(Venue.id_venue == venue.id_venue)
-      data.append({
-        "id": venue.id_venue,
-        "name": venue.name,
-      })
-  
-  response={
-        "count": len(venues),
-        "data": data
-      }
-
-  return render_template('pages/search_venues.html', results=response, search_term=request.form.get('search_term', ''))
+    response={
+          "count": len(venues),
+          "data": data
+        }
+    return render_template('pages/search_venues.html', results=response, search_term=request.form.get('search_term', ''))
 
 @app.route('/venues/<int:venue_id>')
 def show_venue(venue_id):
   # shows the venue page with the given venue_id
   # TODO: replace with real venue data from the venues table, using venue_id
-  data=Venue.query.filter_by(id_venue=venue_id).first()  
-  return render_template('pages/show_venue.html', venue=data)
+    venue=Venue.query.filter_by(id_venue=venue_id).first()
+#-------------------------------------------------------------
+# Falta Obtener la lista de artistas que tocan en los show pasados y futuros.
+# Falta obtener la fecha de los show pasados y futuros en formato string.
+# Falta obtener las fotos de los artistas, los nombres, fechas.
+# Falta corregir los formularios de edición para cambiar las opciones que no están en el formulario
+# Falta eliminar o editar los show
+# Probar date_time_obj = datetime.strptime(Show.start_time, '%Y-%m-%d %H:%M:%S')
+
+    past_shows = Show.query.filter(Show.venue_id == venue_id, Show.start_time < datetime.now())
+    upcoming_shows = Show.query.filter(Show.venue_id == venue_id, Show.start_time >= datetime.now())   
+    artists_past = []
+    artists_upcoming = []
+
+    for show in past_shows:
+        artist=Artist.query.filter_by(id_artist=show.artist_id).first()
+        artists_past.append({
+          "id": artist.id_artist,
+          "name": artist.name,
+          "image_link": artist.image_link,
+          "date_time": str(show.start_time)
+        })
+    
+    for show in upcoming_shows:
+        artist=Artist.query.filter_by(id_artist=show.artist_id).first()
+        artists_upcoming.append({
+          "id": artist.id_artist,
+          "name": artist.name,
+          "image_link": artist.image_link,
+          "date_time": str(show.start_time)
+        })
+
+    data={
+      "artists_past": artists_past,
+      "artists_upcoming": artists_upcoming,
+      "past_shows_count": past_shows.count(),
+      "upcoming_shows_count": upcoming_shows.count()
+    }
+   
+    return render_template('pages/show_venue.html', venue=venue, data=data)
 
 #  Create Venue
 #  ----------------------------------------------------------------
 
 @app.route('/venues/create', methods=['GET'])
 def create_venue_form():
-  form = VenueForm()
-  return render_template('forms/new_venue.html', form=form)
+    form = VenueForm()
+    return render_template('forms/new_venue.html', form=form)
 
 @app.route('/venues/create', methods=['POST'])
 def create_venue_submission():
@@ -156,7 +192,7 @@ def create_venue_submission():
       address = request.form.get('address')
       state = request.form.get('state')
       phone = request.form.get('phone')
-      site_link = request.form.get('site_link')
+      site_link = "http://www.misitio.com"
       facebook_link = request.form.get('facebook_link')
       image_link = 'https://images.unsplash.com/photo-1543900694-133f37abaaa5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60'
       seeking_talent = False
@@ -189,10 +225,10 @@ def create_venue_submission():
 #  ----------------------------------------------------------------
 @app.route('/venues/<int:venue_id>/edit', methods=['GET'])
 def edit_venue(venue_id):
-  form = VenueForm()
-  venue=Venue.query.filter_by(id_venue=venue_id).first()
+    form = VenueForm()
+    venue=Venue.query.filter_by(id_venue=venue_id).first()
   # TODO: populate form with values from venue with ID <venue_id>
-  return render_template('forms/edit_venue.html', form=form, venue=venue)
+    return render_template('forms/edit_venue.html', form=form, venue=venue)
 
 @app.route('/venues/<int:venue_id>/edit', methods=['POST'])
 def edit_venue_submission(venue_id):
@@ -210,7 +246,7 @@ def edit_venue_submission(venue_id):
       venue.facebook_link = request.form.get('facebook_link')
       venue.seeking_venue = True
       venue.seeking_description = 'Estamos buscando'     
-      venue.image_link = request.form.get('image_link')    
+      venue.image_link = 'https://images.unsplash.com/photo-1543900694-133f37abaaa5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60'   
       db.session.commit()
     except:
       error=True
@@ -254,8 +290,8 @@ def delete_venue(venue_id):
 @app.route('/artists')
 def artists():
   # TODO: replace with real data returned from querying the database
-  data=Artist.query.all()
-  return render_template('pages/artists.html', artists=data)
+    data=Artist.query.all()
+    return render_template('pages/artists.html', artists=data)
 
 @app.route('/artists/search', methods=['POST'])
 def search_artists():
@@ -284,8 +320,8 @@ def search_artists():
 def show_artist(artist_id):
   # shows the venue page with the given venue_id
   # TODO: replace with real venue data from the venues table, using venue_id
-  data=Artist.query.filter_by(id_artist=artist_id).first()
-  return render_template('pages/show_artist.html', artist=data)
+    data=Artist.query.filter_by(id_artist=artist_id).first()
+    return render_template('pages/show_artist.html', artist=data)
 
 
 #  Create Artist
@@ -293,8 +329,8 @@ def show_artist(artist_id):
 
 @app.route('/artists/create', methods=['GET'])
 def create_artist_form():
-  form = ArtistForm()
-  return render_template('forms/new_artist.html', form=form)
+    form = ArtistForm()
+    return render_template('forms/new_artist.html', form=form)
 
 @app.route('/artists/create', methods=['POST'])
 def create_artist_submission():
@@ -311,7 +347,7 @@ def create_artist_submission():
       facebook_link = request.form.get('facebook_link')
       seeking_venue = True
       seeking_description = 'Estamos buscando'     
-      image_link = request.form.get('image_link')
+      image_link = 'https://images.unsplash.com/photo-1549213783-8284d0336c4f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=300&q=80'
       artist= Artist(name=name, city=city, state=state, phone=phone, site_link=site_link, facebook_link=facebook_link, seeking_venue=seeking_venue, seeking_description=seeking_description, image_link=image_link)
       db.session.add(artist)
       db.session.commit()
@@ -336,10 +372,10 @@ def create_artist_submission():
 #  ----------------------------------------------------------------
 @app.route('/artists/<int:artist_id>/edit', methods=['GET'])
 def edit_artist(artist_id):
-  form = ArtistForm()
-  artist=Artist.query.filter_by(id_artist=artist_id).first()
+    form = ArtistForm()
+    artist=Artist.query.filter_by(id_artist=artist_id).first()
   # TODO: populate form with fields from artist with ID <artist_id>
-  return render_template('forms/edit_artist.html', form=form, artist=artist)
+    return render_template('forms/edit_artist.html', form=form, artist=artist)
 
 @app.route('/artists/<int:artist_id>/edit', methods=['POST'])
 def edit_artist_submission(artist_id):
@@ -356,7 +392,7 @@ def edit_artist_submission(artist_id):
       artist.facebook_link = request.form.get('facebook_link')
       artist.seeking_venue = True
       artist.seeking_description = 'Estamos buscando'     
-      artist.image_link = request.form.get('image_link')    
+      artist.image_link = 'https://images.unsplash.com/photo-1549213783-8284d0336c4f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=300&q=80'   
       db.session.commit()
     except:
       error=True
@@ -381,7 +417,7 @@ def delete_artist(artist_id):
       db.session.rollback()
     finally:
       db.session.close()
-# clicking that button delete it from the db then redirect the user to the homepage
+  # clicking that button delete it from the db then redirect the user to the homepage
     if error:
       flash('An error occurred. Artist could not be delete.') 
     else:
@@ -419,8 +455,8 @@ def shows():
 @app.route('/shows/create')
 def create_shows():
   # renders form. do not touch.
-  form = ShowForm()
-  return render_template('forms/new_show.html', form=form)
+    form = ShowForm()
+    return render_template('forms/new_show.html', form=form)
 
 @app.route('/shows/create', methods=['POST'])
 def create_show_submission():
