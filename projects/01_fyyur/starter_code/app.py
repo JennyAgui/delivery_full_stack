@@ -135,12 +135,9 @@ def show_venue(venue_id):
   # TODO: replace with real venue data from the venues table, using venue_id
     venue=Venue.query.filter_by(id_venue=venue_id).first()
 #-------------------------------------------------------------
-# Falta Obtener la lista de artistas que tocan en los show pasados y futuros.
-# Falta obtener la fecha de los show pasados y futuros en formato string.
-# Falta obtener las fotos de los artistas, los nombres, fechas.
+
 # Falta corregir los formularios de edición para cambiar las opciones que no están en el formulario
 # Falta eliminar o editar los show
-# Probar date_time_obj = datetime.strptime(Show.start_time, '%Y-%m-%d %H:%M:%S')
 
     past_shows = Show.query.filter(Show.venue_id == venue_id, Show.start_time < datetime.now())
     upcoming_shows = Show.query.filter(Show.venue_id == venue_id, Show.start_time >= datetime.now())   
@@ -320,8 +317,39 @@ def search_artists():
 def show_artist(artist_id):
   # shows the venue page with the given venue_id
   # TODO: replace with real venue data from the venues table, using venue_id
-    data=Artist.query.filter_by(id_artist=artist_id).first()
-    return render_template('pages/show_artist.html', artist=data)
+    artist=Artist.query.filter_by(id_artist=artist_id).first()
+
+    past_shows = Show.query.filter(Show.artist_id == artist_id, Show.start_time < datetime.now())
+    upcoming_shows = Show.query.filter(Show.artist_id == artist_id, Show.start_time >= datetime.now())   
+    venues_past = []
+    venues_upcoming = []
+
+    for show in past_shows:
+        venue=Venue.query.filter_by(id_venue=show.venue_id).first()
+        venues_past.append({
+          "id": venue.id_venue,
+          "name": venue.name,
+          "image_link": venue.image_link,
+          "date_time": str(show.start_time)
+        })
+    
+    for show in upcoming_shows:
+        venue=Venue.query.filter_by(id_venue=show.venue_id).first()
+        venues_upcoming.append({
+          "id": venue.id_venue,
+          "name": venue.name,
+          "image_link": venue.image_link,
+          "date_time": str(show.start_time)
+        })
+
+    data={
+      "venues_past": venues_past,
+      "venues_upcoming": venues_upcoming,
+      "past_shows_count": past_shows.count(),
+      "upcoming_shows_count": upcoming_shows.count()
+    }
+
+    return render_template('pages/show_artist.html', artist=artist, data=data)
 
 
 #  Create Artist
