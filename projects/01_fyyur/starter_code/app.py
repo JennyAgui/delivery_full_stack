@@ -122,6 +122,7 @@ def search_venues():
     data = []
     city = []
     state = []
+    count = 0
     for venue in venues:
         search = Venue.query.filter(Venue.id_venue == venue.id_venue)
         data.append({
@@ -130,7 +131,9 @@ def search_venues():
           "city": venue.city,
           "state": venue.state
         })
-    
+        if search.count() > 0:
+          count += 1
+
     for venue in cities:
         search = Venue.query.filter(Venue.city == venue.city)
         data.append({
@@ -139,6 +142,8 @@ def search_venues():
           "city": venue.city,
           "state": venue.state
         })
+        if search.count() > 0:
+          count += 1
 
     for venue in states:
         search = Venue.query.filter(Venue.state == venue.state)
@@ -148,9 +153,10 @@ def search_venues():
           "city": venue.city,
           "state": venue.state
         })
-
+        if search.count() > 0:
+          count += 1
     response={
-          "count": len(venues),
+          "count": count,
           "data": data
         }
     return render_template('pages/search_venues.html', results=response, search_term=request.form.get('search_term', ''))
@@ -324,18 +330,49 @@ def search_artists():
   # seach for "A" should return "Guns N Petals", "Matt Quevado", and "The Wild Sax Band".
   # search for "band" should return "The Wild Sax Band".
     search_term = request.form.get('search_term', '')
-    artists = db.session.query(Artist).filter(Artist.name.ilike('%' + search_term + '%')).all()
+    artists = Artist.query.filter(Artist.name.ilike('%' + search_term + '%')).all()
+    cities = Artist.query.filter(Artist.city.ilike('%' + search_term + '%')).all()
+    states = Artist.query.filter(Artist.state.ilike('%' + search_term + '%')).all()    
     data = []
+    city = []
+    state = []
+    count = 0
 
     for artist in artists:
-        search = db.session.query(Artist).filter(Artist.id_artist == artist.id_artist)
+        search = Artist.query.filter(Artist.id_artist == artist.id_artist)
         data.append({
         "id": artist.id_artist,
         "name": artist.name,
+        "city": artist.city,
+        "state": artist.state
         })
+        if search.count() > 0:
+          count += 1
+    
+    for artist in cities:
+        search = Artist.query.filter(Artist.city == artist.city)
+        data.append({
+          "id": artist.id_artist,
+          "name": artist.name,
+          "city": artist.city,
+          "state": artist.state
+        })
+        if search.count() > 0:
+          count += 1
+
+    for artist in states:
+        search = Artist.query.filter(Artist.state == artist.state)
+        data.append({
+          "id": artist.id_artist,
+          "name": artist.name,
+          "city": artist.city,
+          "state": artist.state
+        })
+        if search.count() > 0:
+          count += 1
   
     response={
-        "count": len(artists),
+        "count": count,
         "data": data
     }
 
