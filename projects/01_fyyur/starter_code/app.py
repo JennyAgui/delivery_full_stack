@@ -96,7 +96,14 @@ app.jinja_env.filters['datetime'] = format_datetime
 
 @app.route('/')
 def index():
-    return render_template('pages/home.html')
+
+    try:
+      artist=Artist.query.order_by(Artist.id_artist.desc()).limit(10).all()
+      venue=Venue.query.order_by(Venue.id_venue.desc()).limit(10).all()
+    except:
+      flash('An error occurred. The recent artist and venues could not be listed.') 
+    pass
+    return render_template('pages/home.html', artists=artist, venues=venue)
 
 #  ----------------------------------------------------------------
 #  Venues
