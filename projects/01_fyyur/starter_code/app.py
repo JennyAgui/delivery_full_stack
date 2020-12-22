@@ -35,7 +35,7 @@ class Show(db.Model):
     __tablename__ = 'show'    
     artist_id= db.Column(db.Integer, db.ForeignKey('artist.id_artist'), primary_key=True) 
     venue_id = db.Column( db.Integer, db.ForeignKey('venue.id_venue'), primary_key=True)
-    start_time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    start_time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, primary_key=True)
     venue_child = db.relationship("Venue", back_populates="artists") 
     artist_parent = db.relationship("Artist", back_populates="venues") 
 
@@ -98,12 +98,14 @@ app.jinja_env.filters['datetime'] = format_datetime
 def index():
 
     try:
-      artist=Artist.query.order_by(Artist.id_artist.desc()).limit(10).all()
-      venue=Venue.query.order_by(Venue.id_venue.desc()).limit(10).all()
-    except:
-      flash('An error occurred. The recent artist and venues could not be listed.') 
+      artists=Artist.query.order_by(Artist.id_artist.desc()).limit(10).all()   
+      venues=Venue.query.order_by(Venue.id_venue.desc()).limit(10).all() 
+    except Exception as e:
+      print(e)
     pass
-    return render_template('pages/home.html', artists=artist, venues=venue)
+    
+    return render_template('pages/home.html', artists=artists, venues=venues)
+#          venues=Venue.query.order_by(Venue.id_venue.desc()).limit(10).all()      
 
 #  ----------------------------------------------------------------
 #  Venues
