@@ -580,7 +580,7 @@ def create_show_submission():
     finally:
       db.session.close()
     if error:
-      flash('An error occurred. Show could not be listed.')
+      flash('An error occurred. Show could not be registed.')
     else:
       flash('Show was successfully listed!')   
     return render_template('pages/home.html')
