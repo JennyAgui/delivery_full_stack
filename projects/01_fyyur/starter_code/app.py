@@ -35,7 +35,7 @@ class Show(db.Model):
     __tablename__ = 'show'    
     artist_id= db.Column(db.Integer, db.ForeignKey('artist.id_artist'), primary_key=True) 
     venue_id = db.Column( db.Integer, db.ForeignKey('venue.id_venue'), primary_key=True)
-    start_time = db.Column(db.DateTime, nullable=True, default=datetime.utcnow)
+    start_time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     venue_child = db.relationship("Venue", back_populates="artists") 
     artist_parent = db.relationship("Artist", back_populates="venues") 
 
@@ -44,16 +44,16 @@ class Venue(db.Model):
     __tablename__ = 'venue'    
     id_venue = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(), nullable=False)
-    city = db.Column(db.String(120), nullable=True)
-    address = db.Column(db.String(120), nullable=True)
-    state = db.Column(db.String(120), nullable=True)
+    city = db.Column(db.String(120), nullable=False)
+    address = db.Column(db.String(120), nullable=False)
+    state = db.Column(db.String(120), nullable=False)
     phone = db.Column(db.String(120), nullable=True)
-    genres = db.Column(db.String(120), nullable=True)
-    site_link = db.Column(db.String(120), nullable=True)
+    genres = db.Column(db.String(120), nullable=False)
+    site_link = db.Column(db.String(120), nullable=True, default='www.yoursite.com')
     facebook_link = db.Column(db.String(120), nullable=True)
-    image_link = db.Column(db.String(500), nullable=True)
-    seeking_talent = db.Column(db.Boolean, nullable=True, default=False)
-    seeking_description = db.Column(db.String(120), nullable=True)
+    image_link = db.Column(db.String(500), nullable=True, default='https://images.unsplash.com/photo-1543900694-133f37abaaa5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60')
+    seeking_talent = db.Column(db.Boolean, nullable=True, default=True)
+    seeking_description = db.Column(db.String(120), nullable=True, default='We are on the lookout for a local artist to play every two weeks. Please call us.')
     artists = db.relationship("Show", back_populates="venue_child")
   # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
@@ -61,15 +61,15 @@ class Artist(db.Model):
     __tablename__ = 'artist'
     id_artist = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
-    city = db.Column(db.String(120), nullable=True)
-    state = db.Column(db.String(120), nullable=True)
+    city = db.Column(db.String(120), nullable=False)
+    state = db.Column(db.String(120), nullable=False)
     phone = db.Column(db.String(120), nullable=True)
-    genres = db.Column(db.String(120), nullable=True)
-    site_link = db.Column(db.String(120), nullable=True)
+    genres = db.Column(db.String(120), nullable=False)
+    site_link = db.Column(db.String(120), nullable=True, default='www.yoursite.com')
     facebook_link = db.Column(db.String(120), nullable=True)
     seeking_venue = db.Column(db.Boolean, nullable=True, default=False)
-    seeking_description = db.Column(db.String(120), nullable=True)
-    image_link = db.Column(db.String(500), nullable=True)   
+    seeking_description = db.Column(db.String(120), nullable=True, default='Looking for shows to perform.')
+    image_link = db.Column(db.String(500), nullable=True, default='https://images.unsplash.com/photo-1549213783-8284d0336c4f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=300&q=80')   
     venues = db.relationship("Show", back_populates="artist_parent")
   # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
@@ -192,11 +192,11 @@ def create_venue_submission():
       state = request.form.get('state')
       phone = request.form.get('phone')
       genres = request.form.getlist('genres')
-      site_link = "http://www.misitio.com"
+      site_link = request.form.get('site_link')
       facebook_link = request.form.get('facebook_link')
-      image_link = 'https://images.unsplash.com/photo-1543900694-133f37abaaa5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60'
-      seeking_talent = False
-      seeking_description = 'We are on the lookout for a local artist to play every two weeks. Please call us.'
+      image_link = request.form.get('image_link')
+      seeking_talent = request.form.get('seeking_talent ')
+      seeking_description = request.form.get('seeking_description')
       venue = Venue(name=name, city=city, address=address, state=state, phone=phone, genres=genres, site_link=site_link, facebook_link=facebook_link, image_link=image_link, seeking_talent=seeking_talent, seeking_description=seeking_description)
       db.session.add(venue)
       db.session.commit()
