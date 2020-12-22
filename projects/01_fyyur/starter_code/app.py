@@ -116,13 +116,37 @@ def search_venues():
   # seach for Hop should return "The Musical Hop".
   # search for "Music" should return "The Musical Hop" and "Park Square Live Music & Coffee"
     search_term = request.form.get('search_term', '')
-    venues = db.session.query(Venue).filter(Venue.name.ilike('%' + search_term + '%')).all()
+    venues = Venue.query.filter(Venue.name.ilike('%' + search_term + '%')).all()
+    cities = Venue.query.filter(Venue.city.ilike('%' + search_term + '%')).all()
+    states = Venue.query.filter(Venue.state.ilike('%' + search_term + '%')).all()    
     data = []
+    city = []
+    state = []
     for venue in venues:
-        search = db.session.query(Venue).filter(Venue.id_venue == venue.id_venue)
+        search = Venue.query.filter(Venue.id_venue == venue.id_venue)
         data.append({
           "id": venue.id_venue,
           "name": venue.name,
+          "city": venue.city,
+          "state": venue.state
+        })
+    
+    for venue in cities:
+        search = Venue.query.filter(Venue.city == venue.city)
+        data.append({
+          "id": venue.id_venue,
+          "name": venue.name,
+          "city": venue.city,
+          "state": venue.state
+        })
+
+    for venue in states:
+        search = Venue.query.filter(Venue.state == venue.state)
+        data.append({
+          "id": venue.id_venue,
+          "name": venue.name,
+          "city": venue.city,
+          "state": venue.state
         })
 
     response={
