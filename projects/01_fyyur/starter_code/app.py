@@ -48,6 +48,7 @@ class Venue(db.Model):
     address = db.Column(db.String(120), nullable=True)
     state = db.Column(db.String(120), nullable=True)
     phone = db.Column(db.String(120), nullable=True)
+    genres = db.Column(db.String(120), nullable=True)
     site_link = db.Column(db.String(120), nullable=True)
     facebook_link = db.Column(db.String(120), nullable=True)
     image_link = db.Column(db.String(500), nullable=True)
@@ -63,6 +64,7 @@ class Artist(db.Model):
     city = db.Column(db.String(120), nullable=True)
     state = db.Column(db.String(120), nullable=True)
     phone = db.Column(db.String(120), nullable=True)
+    genres = db.Column(db.String(120), nullable=True)
     site_link = db.Column(db.String(120), nullable=True)
     facebook_link = db.Column(db.String(120), nullable=True)
     seeking_venue = db.Column(db.Boolean, nullable=True, default=False)
@@ -189,12 +191,13 @@ def create_venue_submission():
       address = request.form.get('address')
       state = request.form.get('state')
       phone = request.form.get('phone')
+      genres = request.form.getlist('genres')
       site_link = "http://www.misitio.com"
       facebook_link = request.form.get('facebook_link')
       image_link = 'https://images.unsplash.com/photo-1543900694-133f37abaaa5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60'
       seeking_talent = False
       seeking_description = 'We are on the lookout for a local artist to play every two weeks. Please call us.'
-      venue = Venue(name=name, city=city, address=address, state=state, phone=phone, site_link=site_link, facebook_link=facebook_link, image_link=image_link, seeking_talent=seeking_talent, seeking_description=seeking_description)
+      venue = Venue(name=name, city=city, address=address, state=state, phone=phone, genres=genres, site_link=site_link, facebook_link=facebook_link, image_link=image_link, seeking_talent=seeking_talent, seeking_description=seeking_description)
       db.session.add(venue)
       db.session.commit()
     except:
@@ -236,9 +239,10 @@ def edit_venue_submission(venue_id):
       venue = Venue.query.get(venue_id)     
       venue.name = request.form.get('name')
       venue.city = request.form.get('city')   
-      venue.state = 'CA'   
-      venue.adrres = request.form.get('address')  
+      venue.state = request.form.get('state')   
+      venue.addrres = request.form.get('address')  
       venue.phone = request.form.get('phone')
+      venue.genres = request.form.getlist('genres')
       venue.site_link = request.form.get('site_link')
       venue.facebook_link = request.form.get('facebook_link')
       venue.seeking_venue = True
@@ -371,12 +375,13 @@ def create_artist_submission():
       city = request.form.get('city')
       state = request.form.get('state')
       phone = request.form.get('phone')
-      site_link = request.form.get('site_link')
+      genres = request.form.getlist('genres')
+      site_link = 'www.yoursite.com'
       facebook_link = request.form.get('facebook_link')
       seeking_venue = True
       seeking_description = 'Estamos buscando'     
       image_link = 'https://images.unsplash.com/photo-1549213783-8284d0336c4f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=300&q=80'
-      artist= Artist(name=name, city=city, state=state, phone=phone, site_link=site_link, facebook_link=facebook_link, seeking_venue=seeking_venue, seeking_description=seeking_description, image_link=image_link)
+      artist= Artist(name=name, city=city, state=state, phone=phone, genres=genres, site_link=site_link, facebook_link=facebook_link, seeking_venue=seeking_venue, seeking_description=seeking_description, image_link=image_link)
       db.session.add(artist)
       db.session.commit()
     except:
@@ -414,9 +419,10 @@ def edit_artist_submission(artist_id):
       artist = Artist.query.get(artist_id)     
       artist.name = request.form.get('name')
       artist.city = request.form.get('city')   
-      artist.state = 'CA'   
+      artist.state = request.form.get('state')  
       artist.phone = request.form.get('phone')
-      artist.site_link = request.form.get('site_link')
+      artist.genres = request.form.getlist('genres')
+      artist.site_link = 'www.yoursite.com'
       artist.facebook_link = request.form.get('facebook_link')
       artist.seeking_venue = True
       artist.seeking_description = 'Estamos buscando'     
