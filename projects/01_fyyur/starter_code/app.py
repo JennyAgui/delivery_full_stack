@@ -27,17 +27,16 @@ db.init_app(app)
 
 migrate = Migrate(app, db)
 
-# TODO: connect to a local postgresql database
+  # TODO: connect to a local postgresql database
 
 #----------------------------------------------------------------------------#
 # Models.
 #----------------------------------------------------------------------------#
 
+# Models was separeted in models.py
 
   # TODO: implement any missing fields, as a database migration using Flask-Migrate
-
   # TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
-
 
 #----------------------------------------------------------------------------#
 # Filters.
@@ -68,7 +67,7 @@ def index():
     pass
     
     return render_template('pages/home.html', artists=artists, venues=venues)
-#          venues=Venue.query.order_by(Venue.id_venue.desc()).limit(10).all()      
+    
 
 #  ----------------------------------------------------------------
 #  Venues
