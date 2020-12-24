@@ -51,7 +51,7 @@
 			<div class="tile tile-show">
 				<img src="{{ venue.image_link }}" alt="Show Venue Image" />
 				<h5><a href="/venues/{{ venue.id }}">{{ venue.name }}</a></h5>
-				<h6>{{ venue.date_time|datetime('full') }}</h6>
+				<h6>{{ venue.start_time|datetime('full') }}</h6>
 			</div>
 		</div>
 		{% endfor %}
@@ -65,7 +65,7 @@
 			<div class="tile tile-show">
 				<img src="{{ venue.image_link }}" alt="Show Venue Image" />
 				<h5><a href="/venues/{{ venue.id }}">{{ venue.name }}</a></h5>
-				<h6>{{ venue.date_time|datetime('full') }}</h6>
+				<h6>{{ venue.start_time|datetime('full') }}</h6>
 			</div>
 		</div>
 		{% endfor %}

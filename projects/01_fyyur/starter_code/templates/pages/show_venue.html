@@ -53,8 +53,8 @@
 		<div class="col-sm-4">
 			<div class="tile tile-show">
 				<img src="{{ artist.image_link }}" alt="Show Artist Image" />
-				<h5><a href="/artists/{{ artist.id }}">{{ artist.name }}</a></h5>
-				<h6>{{ artist.date_time|datetime('full')}}</h6>
+				<h5><a href="/artists/{{ artist.id_artist }}">{{ artist.name }}</a></h5>
+				<h6>{{ artist.start_time|datetime('full') }}</h6>
 			</div>
 		</div>
 		{% endfor %}
@@ -67,8 +67,8 @@
 		<div class="col-sm-4">
 			<div class="tile tile-show">
 				<img src="{{ artist.image_link }}" alt="Show Artist Image" />
-				<h5><a href="/artists/{{ artist.id }}">{{ artist.name }}</a></h5>
-				<h6>{{ artist.date_time|datetime('full') }}</h6>
+				<h5><a href="/artists/{{ artist.id_artist }}">{{ artist.name }}</a></h5>
+				<h6>{{ artist.start_time|datetime('full') }}</h6>
 			</div>
 		</div>
 		{% endfor %}
