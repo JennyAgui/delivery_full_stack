@@ -158,7 +158,7 @@ def show_venue(venue_id):
           "venue_id": show.venue_id,
           "start_time": str(show.start_time),
           "name": show.name,
-          "id_artist": show.id_artist,
+          "id": show.id_artist,
           "name": show.name,
           "image_link": show.image_link,
         })
